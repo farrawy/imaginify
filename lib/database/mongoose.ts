@@ -2,7 +2,7 @@
 import mongoose, { Mongoose } from "mongoose";
 
 // Retrieve MongoDB connection URL from environment variables
-const MONGODB_URL = process.env.MONGODB_URL;
+const MONGODB_URL = process.env.MongoDB_URL;
 
 // Define an interface for caching the mongoose connection and promise
 interface MongooseConnection {
@@ -22,7 +22,7 @@ if (!cached) {
 }
 
 // Function to connect to the MongoDB database
-export const connectTODatabase = async () => {
+export const connectToDatabase = async () => {
   // Return the existing connection if it's already established
   if (cached.conn) return cached.conn;
 

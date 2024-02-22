@@ -3,13 +3,13 @@
 import { revalidatePath } from "next/cache";
 
 import User from "../database/models/user.model";
-import { connectTODatabase } from "../database/mongoose";
+import { connectToDatabase } from "../database/mongoose";
 import { handleError } from "../utils";
 
 // CREATE USER
 export const createUser = async (user: CreateUserParams) => {
   try {
-    await connectTODatabase();
+    await connectToDatabase();
 
     const newUser = await User.create(user);
 
@@ -22,7 +22,7 @@ export const createUser = async (user: CreateUserParams) => {
 // READ USER
 export const getUserById = async (userId: string) => {
   try {
-    await connectTODatabase();
+    await connectToDatabase();
 
     const user = await User.findOne({ clerkId: userId });
 
@@ -37,7 +37,7 @@ export const getUserById = async (userId: string) => {
 // UPDATE USER
 export const updateUser = async (clerkId: string, user: UpdateUserParams) => {
   try {
-    await connectTODatabase();
+    await connectToDatabase();
 
     const updatedUser = await User.findOneAndUpdate({ clerkId }, user, {
       new: true,
@@ -54,7 +54,7 @@ export const updateUser = async (clerkId: string, user: UpdateUserParams) => {
 // DELETE USER
 export const deleteUser = async (clerkId: string) => {
   try {
-    await connectTODatabase();
+    await connectToDatabase();
 
     const userToDelete = await User.findOne({ clerkId });
 
@@ -73,7 +73,7 @@ export const deleteUser = async (clerkId: string) => {
 // USE CREDITS
 export const updateCredits = async (userId: string, creditFee: number) => {
   try {
-    await connectTODatabase();
+    await connectToDatabase();
 
     const updatedUserCredits = await User.findOneAndUpdate(
       { _id: userId },
