@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -28,7 +28,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { AspectRatioKey } from "@/lib/utils";
+import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils";
+import { updateCredits } from "@/lib/actions/user.actions";
 
 export const formSchema = z.object({
   title: z.string(),
@@ -56,6 +57,7 @@ const TransformationForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformationConfig, setTransformationConfig] = useState(config);
+  const [isPending, startTransition] = useTransition();
 
   const initialValues =
     data && action === "Update"
@@ -99,9 +101,34 @@ const TransformationForm = ({
     value: string,
     type: string,
     onChangeField: (value: string) => void,
-  ) => {};
+  ) => {
+    debounce(() => {
+      setNewTransformation((prevState: any) => ({
+        ...prevState,
+        [type]: {
+          ...prevState?.[type],
+          [fieldName === "prompt" ? "prompt" : "to"]: value,
+        },
+      }));
 
-  const onTransformHandler = () => {};
+      return onChangeField(value);
+    }, 1000);
+  };
+
+  // TODO: Return to updateCredits
+  const onTransformHandler = () => {
+    setIsTransforming(true);
+
+    setTransformationConfig(
+      deepMergeObjects(newTransformation, transformationConfig),
+    );
+
+    setNewTransformation(null);
+
+    startTransition(() => {
+      // updateCredits(userId, creditBalance - transformationType.cost);
+    });
+  };
 
   return (
     <Form {...form}>
