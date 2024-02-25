@@ -1,9 +1,12 @@
 import Collection from "@/components/shared/Collection";
 import { navLinks } from "@/constants";
 import { getAllImages } from "@/lib/actions/image.actions";
+import { getUserCredits } from "@/lib/actions/user.actions";
+import { auth } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { redirect, useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
 const Home = async ({ searchParams }: SearchParamProps) => {
   const page = Number(searchParams?.page) || 1;
@@ -11,8 +14,14 @@ const Home = async ({ searchParams }: SearchParamProps) => {
 
   const images = await getAllImages({ page, searchQuery });
 
+  const { userId } = auth();
+  if (!userId) redirect("/sign-in");
+
+  const userCredits = await getUserCredits(userId);
+
   return (
     <>
+      <h1>You have {userCredits} credits</h1>
       <section className="home">
         <h1 className="home-heading">
           Unleash Your Creative Vision with Imaginify

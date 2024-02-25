@@ -88,3 +88,21 @@ export const updateCredits = async (userId: string, creditFee: number) => {
     handleError(error);
   }
 };
+
+// GET CREDITS
+export const getUserCredits = async (userId: string) => {
+  try {
+    await connectToDatabase();
+
+    const user = await User.findOne(
+      { clerkId: userId },
+      { creditBalance: 1, _id: 0 },
+    );
+
+    if (!user) throw new Error("User not found");
+
+    return JSON.parse(JSON.stringify(user.creditBalance));
+  } catch (error) {
+    handleError(error);
+  }
+};
